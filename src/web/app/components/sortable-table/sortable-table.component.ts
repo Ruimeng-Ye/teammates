@@ -140,6 +140,7 @@ export class SortableTableComponent implements OnInit, OnChanges {
 
   constructor(private tableComparatorService: TableComparatorService) { }
 
+
   ngOnInit(): void {
     this.tableRows = this.rows;
     this.initialSort(); // Performs an initial sort on the table
@@ -178,11 +179,23 @@ export class SortableTableComponent implements OnInit, OnChanges {
     if (!sortBy) {
       return;
     }
+    const extractTeamNumber = (teamString: string): number => {
+        return parseInt(teamString.replace('Team ', ''), 10);
+    };
+
+     this.tableRows.sort((row1: any[], row2: any[]) => {
+            const teamNumber1 = extractTeamNumber(row1[columnIndex].value);
+            const teamNumber2 = extractTeamNumber(row2[columnIndex].value);
+            return teamNumber1 - teamNumber2;
+        });
+
     this.sortEvent.emit({ sortBy, sortOrder: this.sortOrder });
-    this.tableRows.sort((row1: any[], row2: any[]) => {
-      return this.tableComparatorService.compare(
-          sortBy, this.sortOrder, String(row1[columnIndex].value), String(row2[columnIndex].value));
-    });
+
+
+//     this.tableRows.sort((row1: any[], row2: any[]) => {
+//       return this.tableComparatorService.compare(
+//           sortBy, this.sortOrder, String(row1[columnIndex].value), String(row2[columnIndex].value));
+//     });
   }
 
   /**
