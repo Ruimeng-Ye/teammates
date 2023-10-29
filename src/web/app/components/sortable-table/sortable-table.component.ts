@@ -179,6 +179,10 @@ export class SortableTableComponent implements OnInit, OnChanges {
     if (!sortBy) {
       return;
     }
+
+/**
+ * This code snippet is responsible for sorting table rows based on the team number extracted from a string.
+ */
     const extractTeamNumber = (teamString: string): number => {
         return parseInt(teamString.replace('Team ', ''), 10);
     };
@@ -190,12 +194,6 @@ export class SortableTableComponent implements OnInit, OnChanges {
         });
 
     this.sortEvent.emit({ sortBy, sortOrder: this.sortOrder });
-
-
-//     this.tableRows.sort((row1: any[], row2: any[]) => {
-//       return this.tableComparatorService.compare(
-//           sortBy, this.sortOrder, String(row1[columnIndex].value), String(row2[columnIndex].value));
-//     });
   }
 
   /**
