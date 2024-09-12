@@ -3,7 +3,7 @@ package teammates.ui.webapi;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 import org.apache.http.HttpStatus;
 import org.apache.http.client.methods.HttpDelete;
@@ -31,6 +31,9 @@ public final class ActionFactory {
         map(ResourceURIs.DATABUNDLE, POST, PutDataBundleAction.class);
         // Even though this is a DELETE action, PUT is used as DELETE does not allow usage of response body
         map(ResourceURIs.DATABUNDLE, PUT, DeleteDataBundleAction.class);
+        map(ResourceURIs.SQL_DATABUNDLE, POST, PutSqlDataBundleAction.class);
+        // Even though this is a DELETE action, PUT is used as DELETE does not allow usage of response body
+        map(ResourceURIs.SQL_DATABUNDLE, PUT, DeleteSqlDataBundleAction.class);
         map(ResourceURIs.DATABUNDLE_DOCUMENTS, PUT, PutDataBundleDocumentsAction.class);
         map(ResourceURIs.EXCEPTION, GET, AdminExceptionTestAction.class);
         // Even though this is a GET action, POST is used in order to get extra protection from CSRF
@@ -47,7 +50,10 @@ public final class ActionFactory {
         map(ResourceURIs.ACCOUNT_REQUEST, GET, GetAccountRequestAction.class);
         map(ResourceURIs.ACCOUNT_REQUEST, POST, CreateAccountRequestAction.class);
         map(ResourceURIs.ACCOUNT_REQUEST, DELETE, DeleteAccountRequestAction.class);
+        map(ResourceURIs.ACCOUNT_REQUEST, PUT, UpdateAccountRequestAction.class);
+        map(ResourceURIs.ACCOUNT_REQUESTS, GET, GetAccountRequestsAction.class);
         map(ResourceURIs.ACCOUNT_REQUEST_RESET, PUT, ResetAccountRequestAction.class);
+        map(ResourceURIs.ACCOUNT_REQUEST_REJECTION, POST, RejectAccountRequestAction.class);
         map(ResourceURIs.ACCOUNTS, GET, GetAccountsAction.class);
         map(ResourceURIs.COURSE, GET, GetCourseAction.class);
         map(ResourceURIs.COURSE, DELETE, DeleteCourseAction.class);
@@ -137,7 +143,7 @@ public final class ActionFactory {
         map(ResourceURIs.ACTION_CLASS, GET, GetActionClassesAction.class);
 
         // Cron jobs; use GET request
-        // Reference: https://cloud.google.com/appengine/docs/standard/java11/scheduling-jobs-with-cron-yaml
+        // Reference: https://cloud.google.com/appengine/docs/standard/scheduling-jobs-with-cron-yaml
 
         map(CronJobURIs.AUTOMATED_LOG_COMPILATION, GET, CompileLogsAction.class);
         map(CronJobURIs.AUTOMATED_DATASTORE_BACKUP, GET, DatastoreBackupAction.class);
@@ -148,6 +154,7 @@ public final class ActionFactory {
         map(CronJobURIs.AUTOMATED_FEEDBACK_OPENING_SOON_REMINDERS, GET,
                 FeedbackSessionOpeningSoonRemindersAction.class);
         map(CronJobURIs.AUTOMATED_USAGE_STATISTICS_COLLECTION, GET, CalculateUsageStatisticsAction.class);
+        map(CronJobURIs.AUTOMATED_FEEDBACK_SESSION_LOGS_PROCESSING, GET, UpdateFeedbackSessionLogsAction.class);
 
         // Task queue workers; use POST request
         // Reference: https://cloud.google.com/tasks/docs/creating-appengine-tasks

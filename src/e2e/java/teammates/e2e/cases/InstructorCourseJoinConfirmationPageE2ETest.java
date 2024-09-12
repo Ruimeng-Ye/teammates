@@ -18,6 +18,8 @@ public class InstructorCourseJoinConfirmationPageE2ETest extends BaseE2ETestCase
     protected void prepareTestData() {
         testData = loadDataBundle("/InstructorCourseJoinConfirmationPageE2ETest.json");
         removeAndRestoreDataBundle(testData);
+        sqlTestData = removeAndRestoreSqlDataBundle(
+                        loadSqlDataBundle("/InstructorCourseJoinConfirmationPageE2ETest_SqlEntities.json"));
 
         newInstructor = testData.instructors.get("ICJoinConf.instr.CS1101");
         newInstructor.setGoogleId("tm.e2e.ICJoinConf.instr2");
@@ -66,7 +68,7 @@ public class InstructorCourseJoinConfirmationPageE2ETest extends BaseE2ETestCase
         ______TS("Click join link: valid account request key");
 
         String regKey = BACKDOOR
-                .getRegKeyForAccountRequest("ICJoinConf.newinstr@gmail.tmt", "TEAMMATES Test Institute 1");
+                .getRegKeyForAccountRequest(sqlTestData.accountRequests.get("ICJoinConf.newinstr").getId());
 
         joinLink = createFrontendUrl(Const.WebPageURIs.JOIN_PAGE)
                 .withIsCreatingAccount("true")

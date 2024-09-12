@@ -5,20 +5,6 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { RouterTestingModule } from '@angular/router/testing';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { of } from 'rxjs';
-import { CourseService } from '../../../services/course.service';
-import { InstructorService } from '../../../services/instructor.service';
-import { SimpleModalService } from '../../../services/simple-modal.service';
-import { createMockNgbModalRef } from '../../../test-helpers/mock-ngb-modal-ref';
-import { Course, Instructor, InstructorPermissionRole, JoinState } from '../../../types/api-output';
-import { InstructorCreateRequest } from '../../../types/api-request';
-import { AjaxLoadingModule } from '../../components/ajax-loading/ajax-loading.module';
-import { CourseEditFormComponent } from '../../components/course-edit-form/course-edit-form.component';
-import { LoadingRetryModule } from '../../components/loading-retry/loading-retry.module';
-import { LoadingSpinnerModule } from '../../components/loading-spinner/loading-spinner.module';
-import { PanelChevronModule } from '../../components/panel-chevron/panel-chevron.module';
-import { SimpleModalModule } from '../../components/simple-modal/simple-modal.module';
-import { TeammatesCommonModule } from '../../components/teammates-common/teammates-common.module';
-import { TeammatesRouterModule } from '../../components/teammates-router/teammates-router.module';
 import {
   CopyInstructorsFromOtherCoursesModalComponent,
 } from './copy-instructors-from-other-courses-modal/copy-instructors-from-other-courses-modal.component';
@@ -31,6 +17,21 @@ import {
   InstructorEditPanelComponent,
 } from './instructor-edit-panel/instructor-edit-panel.component';
 import { ViewRolePrivilegesModalComponent } from './view-role-privileges-modal/view-role-privileges-modal.component';
+import { CourseService } from '../../../services/course.service';
+import { InstructorService } from '../../../services/instructor.service';
+import { SimpleModalService } from '../../../services/simple-modal.service';
+import { instructorBuilder } from '../../../test-helpers/generic-builder';
+import { createMockNgbModalRef } from '../../../test-helpers/mock-ngb-modal-ref';
+import { Course, Instructor, InstructorPermissionRole, JoinState } from '../../../types/api-output';
+import { InstructorCreateRequest } from '../../../types/api-request';
+import { AjaxLoadingModule } from '../../components/ajax-loading/ajax-loading.module';
+import { CourseEditFormComponent } from '../../components/course-edit-form/course-edit-form.component';
+import { LoadingRetryModule } from '../../components/loading-retry/loading-retry.module';
+import { LoadingSpinnerModule } from '../../components/loading-spinner/loading-spinner.module';
+import { PanelChevronModule } from '../../components/panel-chevron/panel-chevron.module';
+import { SimpleModalModule } from '../../components/simple-modal/simple-modal.module';
+import { TeammatesCommonModule } from '../../components/teammates-common/teammates-common.module';
+import { TeammatesRouterModule } from '../../components/teammates-router/teammates-router.module';
 
 const testCourse: Course = {
   courseId: 'exampleId',
@@ -41,26 +42,19 @@ const testCourse: Course = {
   deletionTimestamp: 1000,
 };
 
-const testInstructor1: Instructor = {
-  courseId: 'exampleId',
-  email: 'instructor1@gmail.com',
-  joinState: JoinState.JOINED,
-  name: 'Instructor 1',
-};
+const testInstructor1: Instructor = instructorBuilder.email('instructor1@gmail.com').name('Instructor 1').build();
 
-const testInstructor2: Instructor = {
-  courseId: 'exampleId',
-  email: 'instructor2@gmail.com',
-  joinState: JoinState.NOT_JOINED,
-  name: 'Instructor 2',
-};
+const testInstructor2 = instructorBuilder
+  .email('instructor2@gmail.com')
+  .joinState(JoinState.NOT_JOINED)
+  .name('Instructor 2')
+  .build();
 
-const testInstructor3: Instructor = {
-  courseId: 'exampleId',
-  email: 'instructor3@gmail.com',
-  joinState: JoinState.NOT_JOINED,
-  name: 'Instructor 3',
-};
+const testInstructor3 = instructorBuilder
+  .email('instructor3@gmail.com')
+  .joinState(JoinState.NOT_JOINED)
+  .name('Instructor 3')
+  .build();
 
 const emptyInstructorPanel: InstructorEditPanel = {
   googleId: '',

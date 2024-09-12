@@ -72,7 +72,7 @@ export class StudentHomePageComponent implements OnInit {
   isCoursesLoading: boolean = false;
   hasCoursesLoadingFailed: boolean = false;
 
-  sortBy: SortBy = SortBy.NONE;
+  sortBy: SortBy = SortBy.COURSE_CREATION_DATE;
 
   sessionSubmissionStatusPipe = new SubmissionStatusPipe();
   formatDateDetailPipe = new FormatDateDetailPipe(this.timezoneService);
@@ -114,11 +114,7 @@ export class StudentHomePageComponent implements OnInit {
             });
           });
 
-          this.courses.sort((a: StudentCourse, b: StudentCourse) => (a.course.courseId > b.course.courseId ? 1 : -1));
-          this.courses.slice(0, 3).forEach((course: StudentCourse) => {
-            course.isTabExpanded = true;
-            this.loadFeedbackSessionsForCourse(course.course.courseId);
-          });
+          this.sortCoursesBy(SortBy.COURSE_CREATION_DATE);
         },
         error: (e: ErrorMessageOutput) => {
           this.hasCoursesLoadingFailed = true;
@@ -306,11 +302,9 @@ export class StudentHomePageComponent implements OnInit {
     this.courses = copy;
 
     // open the first three panels
-    this.courses.forEach((course: StudentCourse, idx: number) => {
-      course.isTabExpanded = idx < 3;
-      if (idx < 3) {
-        this.loadFeedbackSessionsForCourse(course.course.courseId);
-      }
+    this.courses.slice(0, 3).forEach((course: StudentCourse) => {
+      course.isTabExpanded = true;
+      this.loadFeedbackSessionsForCourse(course.course.courseId);
     });
   }
 

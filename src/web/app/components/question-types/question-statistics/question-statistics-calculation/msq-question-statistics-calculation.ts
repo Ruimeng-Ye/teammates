@@ -1,4 +1,5 @@
 import { Directive } from '@angular/core';
+import { McqMsqQuestionStatisticsCalculation } from './mcq-msq-question-statistics-calculation';
 import {
   FeedbackMsqQuestionDetails,
   FeedbackMsqResponseDetails,
@@ -6,7 +7,6 @@ import {
 } from '../../../../../types/api-output';
 import { MSQ_ANSWER_NONE_OF_THE_ABOVE } from '../../../../../types/feedback-response-details';
 import { QuestionStatistics } from '../question-statistics';
-import { McqMsqQuestionStatisticsCalculation } from './mcq-msq-question-statistics-calculation';
 
 /**
  * Class to calculate stats for msq question.
@@ -23,6 +23,11 @@ export class MsqQuestionStatisticsCalculation
   weightedPercentagePerOption: Record<string, number> = {};
   perRecipientResponses: Record<string, any> = {};
   hasAnswers: boolean = false;
+
+  // eslint-disable-next-line @typescript-eslint/no-useless-constructor
+  constructor(question: FeedbackMsqQuestionDetails) {
+    super(question);
+  }
 
   calculateStatistics(): void {
     this.answerFrequency = {};
@@ -86,19 +91,29 @@ export class MsqQuestionStatisticsCalculation
     const perRecipientResponse: Record<string, Record<string, number>> = {};
     const recipientToTeam: Record<string, string> = {};
     const recipientEmails: Record<string, string> = {};
+    const recipientNames: Record<string, string> = {};
     for (const response of this.responses) {
-      perRecipientResponse[response.recipient] = perRecipientResponse[response.recipient] || {};
-      recipientEmails[response.recipient] = recipientEmails[response.recipient] || response.recipientEmail || '';
+      const responseEmail = response.recipientEmail;
+      if (!responseEmail) {
+        continue;
+      }
+      perRecipientResponse[responseEmail] = perRecipientResponse[responseEmail] || {};
+      recipientEmails[responseEmail] = recipientEmails[responseEmail] || responseEmail || '';
+      recipientNames[responseEmail] = recipientNames[responseEmail] || response.recipient || '';
       for (const choice of this.question.msqChoices) {
-        perRecipientResponse[response.recipient][choice] = 0;
+        perRecipientResponse[responseEmail][choice] = 0;
       }
       if (this.question.otherEnabled) {
-        perRecipientResponse[response.recipient]['Other'] = 0;
+        perRecipientResponse[responseEmail]['Other'] = 0;
       }
-      recipientToTeam[response.recipient] = response.recipientTeam;
+      recipientToTeam[responseEmail] = response.recipientTeam;
     }
     for (const response of this.responses) {
-      this.updateResponseCountPerOptionForResponse(response.responseDetails, perRecipientResponse[response.recipient]);
+      const email = response.recipientEmail;
+      if (!email) {
+        continue;
+      }
+      this.updateResponseCountPerOptionForResponse(response.responseDetails, perRecipientResponse[email]);
     }
 
     for (const recipient of Object.keys(perRecipientResponse)) {
@@ -115,7 +130,7 @@ export class MsqQuestionStatisticsCalculation
       average = numOfResponsesForRecipient ? total / numOfResponsesForRecipient : 0;
 
       this.perRecipientResponses[recipient] = {
-        recipient,
+        recipient: recipientNames[recipient],
         recipientEmail: recipientEmails[recipient],
         total: +total.toFixed(5),
         average: +average.toFixed(2),

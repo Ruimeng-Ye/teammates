@@ -1,13 +1,19 @@
 package teammates.ui.output;
 
-import javax.annotation.Nullable;
+import java.util.UUID;
+
+import jakarta.annotation.Nullable;
 
 import teammates.common.datatransfer.attributes.StudentAttributes;
+import teammates.storage.sqlentity.Student;
 
 /**
  * The API output format of {@link StudentAttributes}.
  */
 public class StudentData extends ApiOutput {
+
+    @Nullable
+    private final UUID studentId;
 
     private final String email;
     private final String courseId;
@@ -28,6 +34,7 @@ public class StudentData extends ApiOutput {
     private final String sectionName;
 
     public StudentData(StudentAttributes studentAttributes) {
+        this.studentId = null;
         this.email = studentAttributes.getEmail();
         this.courseId = studentAttributes.getCourse();
         this.name = studentAttributes.getName();
@@ -35,6 +42,21 @@ public class StudentData extends ApiOutput {
         this.comments = studentAttributes.getComments();
         this.teamName = studentAttributes.getTeam();
         this.sectionName = studentAttributes.getSection();
+    }
+
+    public StudentData(Student student) {
+        this.studentId = student.getId();
+        this.email = student.getEmail();
+        this.courseId = student.getCourseId();
+        this.name = student.getName();
+        this.joinState = student.isRegistered() ? JoinState.JOINED : JoinState.NOT_JOINED;
+        this.comments = student.getComments();
+        this.teamName = student.getTeamName();
+        this.sectionName = student.getSectionName();
+    }
+
+    public UUID getStudentId() {
+        return studentId;
     }
 
     public String getEmail() {

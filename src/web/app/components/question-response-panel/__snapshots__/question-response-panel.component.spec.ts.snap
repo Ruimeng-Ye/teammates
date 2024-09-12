@@ -3,7 +3,6 @@
 exports[`QuestionResponsePanelComponent should snap with feedback session with questions 1`] = `
 <tm-question-response-panel
   RESPONSE_HIDDEN_QUESTIONS={[Function Array]}
-  __ngContext__={[Function Number]}
   feedbackSessionsService={[Function FeedbackSessionsService]}
   intent={[Function String]}
   previewAsPerson=""
@@ -59,8 +58,7 @@ exports[`QuestionResponsePanelComponent should snap with feedback session with q
               Responses are not visible to you. 
             </div>
             <div
-              class="mt-4"
-              id="given-responses"
+              class="given-responses mt-4"
             >
               <strong>
                 Your own responses (to others):
@@ -74,7 +72,7 @@ exports[`QuestionResponsePanelComponent should snap with feedback session with q
                       class="card-header bg-info"
                     >
                       <span
-                        id="response-recipient"
+                        class="response-recipient"
                       >
                         <b>
                           To:
@@ -92,7 +90,7 @@ exports[`QuestionResponsePanelComponent should snap with feedback session with q
                         <tbody>
                           <tr>
                             <td
-                              id="response-giver"
+                              class="response-giver"
                             >
                               <strong>
                                 From:
@@ -164,8 +162,7 @@ exports[`QuestionResponsePanelComponent should snap with feedback session with q
               Responses are not visible to you. 
             </div>
             <div
-              class="mt-4"
-              id="given-responses"
+              class="given-responses mt-4"
             >
               <strong>
                 Your own responses (to others):
@@ -179,7 +176,7 @@ exports[`QuestionResponsePanelComponent should snap with feedback session with q
                       class="card-header bg-info"
                     >
                       <span
-                        id="response-recipient"
+                        class="response-recipient"
                       >
                         <b>
                           To:
@@ -197,7 +194,7 @@ exports[`QuestionResponsePanelComponent should snap with feedback session with q
                         <tbody>
                           <tr>
                             <td
-                              id="response-giver"
+                              class="response-giver"
                             >
                               <strong>
                                 From:
@@ -226,7 +223,7 @@ exports[`QuestionResponsePanelComponent should snap with feedback session with q
                       class="card-header bg-info"
                     >
                       <span
-                        id="response-recipient"
+                        class="response-recipient"
                       >
                         <b>
                           To:
@@ -244,7 +241,7 @@ exports[`QuestionResponsePanelComponent should snap with feedback session with q
                         <tbody>
                           <tr>
                             <td
-                              id="response-giver"
+                              class="response-giver"
                             >
                               <strong>
                                 From:
@@ -316,8 +313,7 @@ exports[`QuestionResponsePanelComponent should snap with feedback session with q
               Responses are not visible to you. 
             </div>
             <div
-              class="mt-4"
-              id="given-responses"
+              class="given-responses mt-4"
             >
               <strong>
                 Your own responses (to others):
@@ -331,7 +327,7 @@ exports[`QuestionResponsePanelComponent should snap with feedback session with q
                       class="card-header bg-info"
                     >
                       <span
-                        id="response-recipient"
+                        class="response-recipient"
                       >
                         <b>
                           To:
@@ -349,7 +345,7 @@ exports[`QuestionResponsePanelComponent should snap with feedback session with q
                         <tbody>
                           <tr>
                             <td
-                              id="response-giver"
+                              class="response-giver"
                             >
                               <strong>
                                 From:
@@ -389,19 +385,15 @@ exports[`QuestionResponsePanelComponent should snap with feedback session with q
                                                 class="col-12"
                                               >
                                                 <span
-                                                  class="text-secondary"
+                                                  class="comment-giver-name"
                                                 >
-                                                  <span
-                                                    id="comment-giver-name"
-                                                  >
-                                                    comment-giver-1 commented at 
-                                                  </span>
-                                                  <span
-                                                    class="ngb-tooltip-class"
-                                                    style="margin-right: .25rem;"
-                                                  >
-                                                     17 Jan 1:09 PM
-                                                  </span>
+                                                  comment-giver-1 commented at 
+                                                </span>
+                                                <span
+                                                  class="ngb-tooltip-class"
+                                                  style="margin-right: .25rem;"
+                                                >
+                                                   17 Jan 1:09 PM
                                                 </span>
                                                 <i
                                                   aria-hidden="true"
@@ -445,7 +437,6 @@ exports[`QuestionResponsePanelComponent should snap with feedback session with q
 exports[`QuestionResponsePanelComponent should snap with feedback session with questions of anonymous responses 1`] = `
 <tm-question-response-panel
   RESPONSE_HIDDEN_QUESTIONS={[Function Array]}
-  __ngContext__={[Function Number]}
   feedbackSessionsService={[Function FeedbackSessionsService]}
   intent={[Function String]}
   previewAsPerson=""
@@ -496,8 +487,7 @@ exports[`QuestionResponsePanelComponent should snap with feedback session with q
               Responses are not visible to you. 
             </div>
             <div
-              class="mt-4"
-              id="given-responses"
+              class="given-responses mt-4"
             >
               <strong>
                 Your own responses (to others):
@@ -511,7 +501,7 @@ exports[`QuestionResponsePanelComponent should snap with feedback session with q
                       class="card-header bg-info"
                     >
                       <span
-                        id="response-recipient"
+                        class="response-recipient"
                       >
                         <b>
                           To:
@@ -529,7 +519,7 @@ exports[`QuestionResponsePanelComponent should snap with feedback session with q
                         <tbody>
                           <tr>
                             <td
-                              id="response-giver"
+                              class="response-giver"
                             >
                               <strong>
                                 From:
@@ -558,7 +548,7 @@ exports[`QuestionResponsePanelComponent should snap with feedback session with q
                       class="card-header bg-info"
                     >
                       <span
-                        id="response-recipient"
+                        class="response-recipient"
                       >
                         <b>
                           To:
@@ -576,7 +566,7 @@ exports[`QuestionResponsePanelComponent should snap with feedback session with q
                         <tbody>
                           <tr>
                             <td
-                              id="response-giver"
+                              class="response-giver"
                             >
                               <strong>
                                 From:
@@ -605,7 +595,7 @@ exports[`QuestionResponsePanelComponent should snap with feedback session with q
                       class="card-header bg-info"
                     >
                       <span
-                        id="response-recipient"
+                        class="response-recipient"
                       >
                         <b>
                           To:
@@ -623,7 +613,7 @@ exports[`QuestionResponsePanelComponent should snap with feedback session with q
                         <tbody>
                           <tr>
                             <td
-                              id="response-giver"
+                              class="response-giver"
                             >
                               <strong>
                                 From:
@@ -690,8 +680,7 @@ exports[`QuestionResponsePanelComponent should snap with feedback session with q
               Responses are not visible to you. 
             </div>
             <div
-              class="mt-4"
-              id="given-responses"
+              class="given-responses mt-4"
             >
               <strong>
                 Your own responses (to others):
@@ -705,7 +694,7 @@ exports[`QuestionResponsePanelComponent should snap with feedback session with q
                       class="card-header bg-info"
                     >
                       <span
-                        id="response-recipient"
+                        class="response-recipient"
                       >
                         <b>
                           To:
@@ -723,7 +712,7 @@ exports[`QuestionResponsePanelComponent should snap with feedback session with q
                         <tbody>
                           <tr>
                             <td
-                              id="response-giver"
+                              class="response-giver"
                             >
                               <strong>
                                 From:
@@ -755,7 +744,6 @@ exports[`QuestionResponsePanelComponent should snap with feedback session with q
 exports[`QuestionResponsePanelComponent should snap with questions and responses when previewing results 1`] = `
 <tm-question-response-panel
   RESPONSE_HIDDEN_QUESTIONS={[Function Array]}
-  __ngContext__={[Function Number]}
   feedbackSessionsService={[Function FeedbackSessionsService]}
   intent={[Function String]}
   previewAsPerson=""
@@ -867,8 +855,7 @@ exports[`QuestionResponsePanelComponent should snap with questions and responses
               Responses are not visible to you. 
             </div>
             <div
-              class="mt-4"
-              id="given-responses"
+              class="given-responses mt-4"
             >
               <strong>
                 Your own responses (to others):
@@ -882,7 +869,7 @@ exports[`QuestionResponsePanelComponent should snap with questions and responses
                       class="card-header bg-info"
                     >
                       <span
-                        id="response-recipient"
+                        class="response-recipient"
                       >
                         <b>
                           To:
@@ -900,7 +887,7 @@ exports[`QuestionResponsePanelComponent should snap with questions and responses
                         <tbody>
                           <tr>
                             <td
-                              id="response-giver"
+                              class="response-giver"
                             >
                               <strong>
                                 From:
@@ -940,19 +927,15 @@ exports[`QuestionResponsePanelComponent should snap with questions and responses
                                                 class="col-12"
                                               >
                                                 <span
-                                                  class="text-secondary"
+                                                  class="comment-giver-name"
                                                 >
-                                                  <span
-                                                    id="comment-giver-name"
-                                                  >
-                                                    comment-giver-1 commented at 
-                                                  </span>
-                                                  <span
-                                                    class="ngb-tooltip-class"
-                                                    style="margin-right: .25rem;"
-                                                  >
-                                                     17 Jan 1:09 PM
-                                                  </span>
+                                                  comment-giver-1 commented at 
+                                                </span>
+                                                <span
+                                                  class="ngb-tooltip-class"
+                                                  style="margin-right: .25rem;"
+                                                >
+                                                   17 Jan 1:09 PM
                                                 </span>
                                                 <i
                                                   aria-hidden="true"
@@ -1032,8 +1015,7 @@ exports[`QuestionResponsePanelComponent should snap with questions and responses
               </div>
             </div>
             <div
-              class="mt-4"
-              id="given-responses"
+              class="given-responses mt-4"
             >
               <strong>
                 Your own responses (to others):
@@ -1047,7 +1029,7 @@ exports[`QuestionResponsePanelComponent should snap with questions and responses
                       class="card-header bg-info"
                     >
                       <span
-                        id="response-recipient"
+                        class="response-recipient"
                       >
                         <b>
                           To:
@@ -1065,7 +1047,7 @@ exports[`QuestionResponsePanelComponent should snap with questions and responses
                         <tbody>
                           <tr>
                             <td
-                              id="response-giver"
+                              class="response-giver"
                             >
                               <strong>
                                 From:

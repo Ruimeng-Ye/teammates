@@ -1,7 +1,9 @@
 package teammates.ui.webapi;
 
-import teammates.common.datatransfer.attributes.AccountRequestAttributes;
+import java.util.UUID;
+
 import teammates.common.util.Const;
+import teammates.storage.sqlentity.AccountRequest;
 import teammates.ui.output.AccountRequestData;
 
 /**
@@ -11,17 +13,15 @@ class GetAccountRequestAction extends AdminOnlyAction {
 
     @Override
     public JsonResult execute() {
-        String email = getNonNullRequestParamValue(Const.ParamsNames.INSTRUCTOR_EMAIL);
-        String institute = getNonNullRequestParamValue(Const.ParamsNames.INSTRUCTOR_INSTITUTION);
+        UUID id = getUuidRequestParamValue(Const.ParamsNames.ACCOUNT_REQUEST_ID);
 
-        AccountRequestAttributes accountRequestInfo = logic.getAccountRequest(email, institute);
+        AccountRequest accountRequest = sqlLogic.getAccountRequest(id);
 
-        if (accountRequestInfo == null) {
-            throw new EntityNotFoundException("Account request for email: "
-                    + email + " and institute: " + institute + " not found.");
+        if (accountRequest == null) {
+            throw new EntityNotFoundException("Account request with id: " + id.toString() + " does not exist.");
         }
 
-        AccountRequestData output = new AccountRequestData(accountRequestInfo);
+        AccountRequestData output = new AccountRequestData(accountRequest);
         return new JsonResult(output);
     }
 

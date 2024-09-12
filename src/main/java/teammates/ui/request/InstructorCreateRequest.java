@@ -1,8 +1,8 @@
 package teammates.ui.request;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 
-import teammates.ui.output.InstructorPermissionRole;
+import teammates.common.datatransfer.InstructorPermissionRole;
 
 /**
  * The create request for an instructor to be created.

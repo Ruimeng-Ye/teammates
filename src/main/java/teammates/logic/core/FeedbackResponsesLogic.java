@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 
 import teammates.common.datatransfer.AttributesDeletionQuery;
 import teammates.common.datatransfer.CourseRoster;
@@ -979,7 +979,7 @@ public final class FeedbackResponsesLogic {
     }
 
     /**
-     * Deletes a feedback response cascade its associated comments.
+     * Deletes a feedback response and cascades its associated comments.
      */
     public void deleteFeedbackResponseCascade(String responseId) {
         frcLogic.deleteFeedbackResponseComments(
@@ -1158,7 +1158,7 @@ public final class FeedbackResponsesLogic {
     /**
      * Set contains only unique response.
      */
-    private static class UniqueResponsesSet {
+    private static final class UniqueResponsesSet {
 
         private final Set<String> responseIds;
         private final List<FeedbackResponseAttributes> responses;

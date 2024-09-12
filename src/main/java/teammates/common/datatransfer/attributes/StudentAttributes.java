@@ -11,6 +11,7 @@ import teammates.common.util.Const;
 import teammates.common.util.FieldValidator;
 import teammates.common.util.SanitizationHelper;
 import teammates.storage.entity.CourseStudent;
+import teammates.storage.sqlentity.Student;
 
 /**
  * The data transfer object for {@link CourseStudent} entities.
@@ -53,6 +54,31 @@ public final class StudentAttributes extends EntityAttributes<CourseStudent> {
         }
         studentAttributes.comments = student.getComments();
         studentAttributes.key = student.getRegistrationKey();
+        if (student.getCreatedAt() != null) {
+            studentAttributes.createdAt = student.getCreatedAt();
+        }
+        if (student.getUpdatedAt() != null) {
+            studentAttributes.updatedAt = student.getUpdatedAt();
+        }
+
+        return studentAttributes;
+    }
+
+    /**
+     * Gets the {@link StudentAttributes} instance of the given {@link Student}.
+     */
+    public static StudentAttributes valueOf(Student student) {
+        StudentAttributes studentAttributes = new StudentAttributes(student.getCourseId(), student.getEmail());
+        studentAttributes.name = student.getName();
+        if (student.getGoogleId() != null) {
+            studentAttributes.googleId = student.getGoogleId();
+        }
+        studentAttributes.team = student.getTeamName();
+        if (student.getSectionName() != null) {
+            studentAttributes.section = student.getSectionName();
+        }
+        studentAttributes.comments = student.getComments();
+        // studentAttributes.key = student.getRegistrationKey();
         if (student.getCreatedAt() != null) {
             studentAttributes.createdAt = student.getCreatedAt();
         }
@@ -297,7 +323,7 @@ public final class StudentAttributes extends EntityAttributes<CourseStudent> {
     /**
      * A builder class for {@link StudentAttributes}.
      */
-    public static class Builder extends BasicBuilder<StudentAttributes, Builder> {
+    public static final class Builder extends BasicBuilder<StudentAttributes, Builder> {
 
         private final StudentAttributes studentAttributes;
 
@@ -319,7 +345,7 @@ public final class StudentAttributes extends EntityAttributes<CourseStudent> {
     /**
      * Helper class to specify the fields to update in {@link StudentAttributes}.
      */
-    public static class UpdateOptions {
+    public static final class UpdateOptions {
         private String courseId;
         private String email;
 
@@ -363,7 +389,7 @@ public final class StudentAttributes extends EntityAttributes<CourseStudent> {
         /**
          * Builder class to build {@link UpdateOptions}.
          */
-        public static class Builder extends BasicBuilder<UpdateOptions, Builder> {
+        public static final class Builder extends BasicBuilder<UpdateOptions, Builder> {
 
             private Builder(String courseId, String email) {
                 super(new UpdateOptions(courseId, email));

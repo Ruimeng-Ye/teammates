@@ -21,6 +21,7 @@ public class ArchitectureTest {
     private static final String STORAGE_PACKAGE = "teammates.storage";
     private static final String STORAGE_API_PACKAGE = STORAGE_PACKAGE + ".api";
     private static final String STORAGE_ENTITY_PACKAGE = STORAGE_PACKAGE + ".entity";
+    private static final String STORAGE_SQL_ENTITY_PACKAGE = STORAGE_PACKAGE + ".sqlentity";
     private static final String STORAGE_SEARCH_PACKAGE = STORAGE_PACKAGE + ".search";
 
     private static final String LOGIC_PACKAGE = "teammates.logic";
@@ -48,6 +49,7 @@ public class ArchitectureTest {
     private static final String LNP_PACKAGE = "teammates.lnp";
 
     private static final String LNP_CASES_PACKAGE = LNP_PACKAGE + ".cases";
+    private static final String LNP_SQL_PACKAGE = LNP_PACKAGE + ".sql";
     private static final String LNP_UTIL_PACKAGE = LNP_PACKAGE + ".util";
 
     private static final String CLIENT_PACKAGE = "teammates.client";
@@ -68,8 +70,14 @@ public class ArchitectureTest {
     @Test
     public void testArchitecture_uiShouldNotTouchStorage() {
         noClasses().that().resideInAPackage(includeSubpackages(UI_PACKAGE))
-                .should().accessClassesThat().resideInAPackage(includeSubpackages(STORAGE_PACKAGE))
-                .check(forClasses(UI_PACKAGE, STORAGE_PACKAGE));
+                .should().accessClassesThat(new DescribedPredicate<>("") {
+                    @Override
+                    public boolean apply(JavaClass input) {
+                        return input.getPackageName().startsWith(STORAGE_PACKAGE)
+                                && !input.getPackageName().startsWith(STORAGE_SQL_ENTITY_PACKAGE);
+                    }
+                })
+                .check(forClasses(UI_PACKAGE));
     }
 
     @Test
@@ -205,7 +213,13 @@ public class ArchitectureTest {
     public void testArchitecture_logic_logicCanOnlyAccessStorageApi() {
         noClasses().that().resideInAPackage(includeSubpackages(LOGIC_PACKAGE))
                 .and().resideOutsideOfPackage(includeSubpackages(LOGIC_CORE_PACKAGE))
-                .should().accessClassesThat().resideInAPackage(includeSubpackages(STORAGE_PACKAGE))
+                .should().accessClassesThat(new DescribedPredicate<>("") {
+                    @Override
+                    public boolean apply(JavaClass input) {
+                        return input.getPackageName().startsWith(STORAGE_PACKAGE)
+                                && !input.getPackageName().startsWith(STORAGE_SQL_ENTITY_PACKAGE);
+                    }
+                })
                 .check(forClasses(LOGIC_PACKAGE, STORAGE_PACKAGE));
 
         noClasses().that().resideInAPackage(includeSubpackages(LOGIC_CORE_PACKAGE))
@@ -305,17 +319,6 @@ public class ArchitectureTest {
                 .should().accessClassesThat(new DescribedPredicate<>("") {
                     @Override
                     public boolean apply(JavaClass input) {
-                        return input.getPackageName().startsWith(STORAGE_PACKAGE)
-                                && !"OfyHelper".equals(input.getSimpleName())
-                                && !"AccountRequestSearchManager".equals(input.getSimpleName())
-                                && !"InstructorSearchManager".equals(input.getSimpleName())
-                                && !"StudentSearchManager".equals(input.getSimpleName())
-                                && !"SearchManagerFactory".equals(input.getSimpleName());
-                    }
-                })
-                .orShould().accessClassesThat(new DescribedPredicate<>("") {
-                    @Override
-                    public boolean apply(JavaClass input) {
                         return input.getPackageName().startsWith(LOGIC_CORE_PACKAGE)
                                 && !"LogicStarter".equals(input.getSimpleName());
                     }
@@ -341,9 +344,21 @@ public class ArchitectureTest {
     @Test
     public void testArchitecture_e2e_e2eShouldNotTouchProductionCodeExceptCommon() {
         noClasses().that().resideInAPackage(includeSubpackages(E2E_PACKAGE))
-                .should().accessClassesThat().resideInAPackage(includeSubpackages(STORAGE_PACKAGE))
+                .should().accessClassesThat(new DescribedPredicate<>("") {
+                    @Override
+                    public boolean apply(JavaClass input) {
+                        return input.getPackageName().startsWith(STORAGE_PACKAGE)
+                                && !input.getPackageName().startsWith(STORAGE_SQL_ENTITY_PACKAGE);
+                    }
+                })
                 .orShould().accessClassesThat().resideInAPackage(includeSubpackages(LOGIC_PACKAGE))
-                .orShould().accessClassesThat().resideInAPackage(includeSubpackages(UI_PACKAGE))
+                .orShould().accessClassesThat(new DescribedPredicate<>("") {
+                    @Override
+                    public boolean apply(JavaClass input) {
+                        return input.getPackageName().startsWith(UI_PACKAGE)
+                                && !input.getPackageName().startsWith(UI_OUTPUT_PACKAGE);
+                    }
+                })
                 .check(forClasses(E2E_PACKAGE));
 
         noClasses().that().resideInAPackage(includeSubpackages(E2E_PACKAGE))
@@ -399,7 +414,13 @@ public class ArchitectureTest {
     @Test
     public void testArchitecture_lnp_lnpShouldNotTouchProductionCodeExceptCommonAndRequests() {
         noClasses().that().resideInAPackage(includeSubpackages(LNP_PACKAGE))
-                .should().accessClassesThat().resideInAPackage(includeSubpackages(STORAGE_PACKAGE))
+                .should().accessClassesThat(new DescribedPredicate<>("") {
+                    @Override
+                    public boolean apply(JavaClass input) {
+                        return input.getPackageName().startsWith(STORAGE_PACKAGE)
+                                && !input.getPackageName().startsWith(STORAGE_SQL_ENTITY_PACKAGE);
+                    }
+                })
                 .orShould().accessClassesThat().resideInAPackage(includeSubpackages(LOGIC_PACKAGE))
                 .orShould().accessClassesThat(new DescribedPredicate<>("") {
                     @Override
@@ -426,6 +447,23 @@ public class ArchitectureTest {
                         && !input.isInnerClass();
             }
         }).check(forClasses(LNP_CASES_PACKAGE));
+    }
+
+    @Test
+    public void testArchitecture_lnp_lnpSqlTestCasesShouldBeIndependentOfEachOther() {
+        noClasses().that(new DescribedPredicate<>("") {
+            @Override
+            public boolean apply(JavaClass input) {
+                return input.getPackageName().startsWith(LNP_SQL_PACKAGE) && !input.isInnerClass();
+            }
+        }).should().accessClassesThat(new DescribedPredicate<>("") {
+            @Override
+            public boolean apply(JavaClass input) {
+                return input.getPackageName().startsWith(LNP_SQL_PACKAGE)
+                        && !input.getSimpleName().startsWith("Base")
+                        && !input.isInnerClass();
+            }
+        }).check(forClasses(LNP_SQL_PACKAGE));
     }
 
     @Test
@@ -511,7 +549,9 @@ public class ArchitectureTest {
                 .and().resideOutsideOfPackage(includeSubpackages(STORAGE_ENTITY_PACKAGE))
                 .and().resideOutsideOfPackage(includeSubpackages(CLIENT_CONNECTOR_PACKAGE))
                 .and().resideOutsideOfPackage(includeSubpackages(CLIENT_SCRIPTS_PACKAGE))
+                .and().doNotHaveSimpleName("BaseTestCaseWithSqlDatabaseAccess")
                 .and().doNotHaveSimpleName("BaseTestCaseWithLocalDatabaseAccess")
+                .and().doNotHaveSimpleName("ObjectifyFilter")
                 .should().accessClassesThat().resideInAPackage("com.googlecode.objectify..")
                 .check(ALL_CLASSES);
     }
@@ -525,7 +565,7 @@ public class ArchitectureTest {
                 .and().doNotHaveSimpleName("MockHttpServletResponse")
                 .and().doNotHaveSimpleName("MockPart")
                 .and().resideOutsideOfPackage(includeSubpackages(UI_WEBAPI_PACKAGE))
-                .should().accessClassesThat().haveFullyQualifiedName("javax.servlet..")
+                .should().accessClassesThat().haveFullyQualifiedName("jakarta.servlet..")
                 .check(ALL_CLASSES);
     }
 
@@ -542,7 +582,7 @@ public class ArchitectureTest {
                 .and().doNotHaveSimpleName("BaseTestCase")
                 .and().doNotHaveSimpleName("AssertHelper")
                 .and().doNotHaveSimpleName("EmailChecker")
-                .should().accessClassesThat().haveFullyQualifiedName("org.junit.Assert")
+                .should().accessClassesThat().haveFullyQualifiedName("org.junit.jupiter.api.Assertions")
                 .check(ALL_CLASSES);
     }
 

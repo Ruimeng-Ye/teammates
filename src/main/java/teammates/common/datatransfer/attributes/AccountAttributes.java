@@ -22,6 +22,7 @@ public final class AccountAttributes extends EntityAttributes<Account> {
     private String email;
     private Map<String, Instant> readNotifications;
     private Instant createdAt;
+    private boolean isMigrated;
 
     private AccountAttributes(String googleId) {
         this.googleId = googleId;
@@ -38,6 +39,7 @@ public final class AccountAttributes extends EntityAttributes<Account> {
         accountAttributes.email = a.getEmail();
         accountAttributes.readNotifications = a.getReadNotifications();
         accountAttributes.createdAt = a.getCreatedAt();
+        accountAttributes.isMigrated = a.isMigrated();
 
         return accountAttributes;
     }
@@ -59,6 +61,7 @@ public final class AccountAttributes extends EntityAttributes<Account> {
         accountAttributes.email = this.email;
         accountAttributes.readNotifications = this.readNotifications;
         accountAttributes.createdAt = this.createdAt;
+        accountAttributes.isMigrated = this.isMigrated;
 
         return accountAttributes;
     }
@@ -103,6 +106,14 @@ public final class AccountAttributes extends EntityAttributes<Account> {
         this.createdAt = createdAt;
     }
 
+    public boolean isMigrated() {
+        return isMigrated;
+    }
+
+    public void setMigrated(boolean migrated) {
+        isMigrated = migrated;
+    }
+
     @Override
     public List<String> getInvalidityInfo() {
         List<String> errors = new ArrayList<>();
@@ -120,13 +131,13 @@ public final class AccountAttributes extends EntityAttributes<Account> {
 
     @Override
     public Account toEntity() {
-        return new Account(googleId, name, email, readNotifications);
+        return new Account(googleId, name, email, readNotifications, isMigrated);
     }
 
     @Override
     public String toString() {
         return "AccountAttributes [googleId=" + googleId + ", name=" + name
-               + ", email=" + email + "]";
+               + ", email=" + email + "]" + ", isMigrated=" + isMigrated + "]";
     }
 
     @Override
@@ -174,7 +185,7 @@ public final class AccountAttributes extends EntityAttributes<Account> {
     /**
      * A builder class for {@link AccountAttributes}.
      */
-    public static class Builder extends BasicBuilder<AccountAttributes, Builder> {
+    public static final class Builder extends BasicBuilder<AccountAttributes, Builder> {
 
         private AccountAttributes accountAttributes;
 
@@ -210,10 +221,11 @@ public final class AccountAttributes extends EntityAttributes<Account> {
     /**
      * Helper class to specify the fields to update in {@link AccountAttributes}.
      */
-    public static class UpdateOptions {
+    public static final class UpdateOptions {
         private String googleId;
 
         private UpdateOption<Map<String, Instant>> readNotificationsOption = UpdateOption.empty();
+        private UpdateOption<Boolean> migratedOption = UpdateOption.empty();
 
         private UpdateOptions(String googleId) {
             assert googleId != null;
@@ -230,13 +242,14 @@ public final class AccountAttributes extends EntityAttributes<Account> {
             return "AccountAttributes.UpdateOptions ["
                     + "googleId = " + googleId
                     + ", readNotifications = " + JsonUtils.toJson(readNotificationsOption)
+                    + ", isMigrated = " + migratedOption
                     + "]";
         }
 
         /**
          * Builder class to build {@link UpdateOptions}.
          */
-        public static class Builder extends BasicBuilder<UpdateOptions, Builder> {
+        public static final class Builder extends BasicBuilder<UpdateOptions, Builder> {
 
             private Builder(String googleId) {
                 super(new UpdateOptions(googleId));
@@ -269,6 +282,11 @@ public final class AccountAttributes extends EntityAttributes<Account> {
 
         public B withReadNotifications(Map<String, Instant> readNotifications) {
             updateOptions.readNotificationsOption = UpdateOption.of(readNotifications);
+            return thisBuilder;
+        }
+
+        public B withMigrated(boolean isMigrated) {
+            updateOptions.migratedOption = UpdateOption.of(isMigrated);
             return thisBuilder;
         }
 

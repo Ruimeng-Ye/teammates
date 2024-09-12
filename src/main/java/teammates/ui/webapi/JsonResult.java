@@ -5,8 +5,8 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
 
 import org.apache.http.HttpStatus;
 
@@ -47,7 +47,7 @@ public class JsonResult extends ActionResult {
         this.cookies = new ArrayList<>();
     }
 
-    ApiOutput getOutput() {
+    public ApiOutput getOutput() {
         return output;
     }
 

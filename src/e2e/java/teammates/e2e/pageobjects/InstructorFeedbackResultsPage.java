@@ -1,7 +1,7 @@
 package teammates.e2e.pageobjects;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.time.Instant;
 import java.util.ArrayList;
@@ -1019,7 +1019,7 @@ public class InstructorFeedbackResultsPage extends AppPage {
     }
 
     private String getCommentGiver(WebElement commentField) {
-        String commentGiverDescription = commentField.findElement(By.id("comment-giver-name")).getText();
+        String commentGiverDescription = commentField.findElement(By.className("comment-giver-name")).getText();
         return commentGiverDescription.split(" commented")[0];
     }
 

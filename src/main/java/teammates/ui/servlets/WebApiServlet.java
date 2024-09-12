@@ -2,16 +2,18 @@ package teammates.ui.servlets;
 
 import java.io.IOException;
 
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 import org.apache.http.HttpStatus;
+import org.hibernate.HibernateException;
 
 import com.google.cloud.datastore.DatastoreException;
 
 import teammates.common.datatransfer.logs.RequestLogUser;
 import teammates.common.exception.DeadlineExceededException;
+import teammates.common.util.HibernateUtil;
 import teammates.common.util.Logger;
 import teammates.ui.request.InvalidHttpRequestBodyException;
 import teammates.ui.webapi.Action;
@@ -55,12 +57,17 @@ public class WebApiServlet extends HttpServlet {
     private void invokeServlet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         int statusCode = 0;
         Action action = null;
+
         try {
             action = ActionFactory.getAction(req, req.getMethod());
-            action.init(req);
-            action.checkAccessControl();
+            ActionResult result;
 
-            ActionResult result = action.execute();
+            if (action.isTransactionNeeded()) {
+                result = executeWithTransaction(action, req);
+            } else {
+                result = executeWithoutTransaction(action, req);
+            }
+
             statusCode = result.getStatusCode();
             result.send(resp);
         } catch (ActionMappingException e) {
@@ -86,7 +93,7 @@ public class WebApiServlet extends HttpServlet {
             statusCode = HttpStatus.SC_GATEWAY_TIMEOUT;
             log.severe(dee.getClass().getSimpleName() + " caught by WebApiServlet", dee);
             throwError(resp, statusCode, "The request exceeded the server timeout limit. Please try again later.");
-        } catch (DatastoreException e) {
+        } catch (DatastoreException | HibernateException e) {
             statusCode = HttpStatus.SC_INTERNAL_SERVER_ERROR;
             log.severe(e.getClass().getSimpleName() + " caught by WebApiServlet: " + e.getMessage(), e);
             throwError(resp, statusCode, e.getMessage());
@@ -109,6 +116,30 @@ public class WebApiServlet extends HttpServlet {
 
             log.request(req, statusCode, actionClass, userInfo, requestBody, actionClass);
         }
+    }
+
+    private ActionResult executeWithTransaction(Action action, HttpServletRequest req)
+            throws InvalidOperationException, InvalidHttpRequestBodyException, UnauthorizedAccessException {
+        try {
+            HibernateUtil.beginTransaction();
+            action.init(req);
+            action.checkAccessControl();
+
+            ActionResult result = action.execute();
+            HibernateUtil.commitTransaction();
+            return result;
+        } catch (Exception e) {
+            HibernateUtil.rollbackTransaction();
+            throw e;
+        }
+    }
+
+    private ActionResult executeWithoutTransaction(Action action, HttpServletRequest req)
+            throws InvalidOperationException, InvalidHttpRequestBodyException, UnauthorizedAccessException {
+        action.init(req);
+        action.checkAccessControl();
+
+        return action.execute();
     }
 
     private void throwErrorBasedOnRequester(HttpServletRequest req, HttpServletResponse resp, Exception e, int statusCode)

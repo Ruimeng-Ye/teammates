@@ -2,20 +2,51 @@ package teammates.test;
 
 import java.io.IOException;
 import java.lang.reflect.Method;
+import java.time.Duration;
+import java.time.Instant;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
-import org.junit.Assert;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.function.Executable;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 
+import teammates.common.datatransfer.AccountRequestStatus;
 import teammates.common.datatransfer.DataBundle;
+import teammates.common.datatransfer.FeedbackParticipantType;
+import teammates.common.datatransfer.InstructorPermissionRole;
+import teammates.common.datatransfer.InstructorPrivileges;
+import teammates.common.datatransfer.NotificationStyle;
+import teammates.common.datatransfer.NotificationTargetUser;
+import teammates.common.datatransfer.SqlDataBundle;
+import teammates.common.datatransfer.questions.FeedbackResponseDetails;
+import teammates.common.datatransfer.questions.FeedbackTextQuestionDetails;
+import teammates.common.datatransfer.questions.FeedbackTextResponseDetails;
+import teammates.common.util.Const;
 import teammates.common.util.FieldValidator;
 import teammates.common.util.JsonUtils;
+import teammates.common.util.TimeHelperExtension;
+import teammates.sqllogic.core.DataBundleLogic;
+import teammates.storage.sqlentity.Account;
+import teammates.storage.sqlentity.AccountRequest;
+import teammates.storage.sqlentity.Course;
+import teammates.storage.sqlentity.FeedbackQuestion;
+import teammates.storage.sqlentity.FeedbackResponse;
+import teammates.storage.sqlentity.FeedbackResponseComment;
+import teammates.storage.sqlentity.FeedbackSession;
+import teammates.storage.sqlentity.Instructor;
+import teammates.storage.sqlentity.Notification;
+import teammates.storage.sqlentity.Section;
+import teammates.storage.sqlentity.Student;
+import teammates.storage.sqlentity.Team;
 
 /**
  * Base class for all test cases.
  */
+@SuppressWarnings("PMD.TestClassWithoutTestCases")
 public class BaseTestCase {
 
     /**
@@ -66,6 +97,122 @@ public class BaseTestCase {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    protected SqlDataBundle getTypicalSqlDataBundle() {
+        return loadSqlDataBundle("/typicalDataBundle.json");
+    }
+
+    protected SqlDataBundle loadSqlDataBundle(String jsonFileName) {
+        try {
+            // TODO: rename to loadDataBundle after migration
+            String pathToJsonFile = getTestDataFolder() + jsonFileName;
+            String jsonString = FileHelper.readFile(pathToJsonFile);
+            return DataBundleLogic.deserializeDataBundle(jsonString);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * These getTypicalX functions are used to generate typical entities for tests.
+     * The entity fields can be changed using setter methods if needed.
+     * New entity generator functions for tests should be added here, and follow the
+     * same naming convention.
+     *
+     * <p>Example usage:
+     * Account account = getTypicalAccount();
+     * Student student = getTypicalStudent();
+     * account.setEmail("newemail@teammates.com");
+     * student.setName("New Student Name");
+     */
+    protected Account getTypicalAccount() {
+        return new Account("google-id", "name", "email@teammates.com");
+    }
+
+    protected Notification getTypicalNotificationWithId() {
+        Notification notification = new Notification(Instant.parse("2011-01-01T00:00:00Z"),
+                Instant.parse("2099-01-01T00:00:00Z"), NotificationStyle.DANGER, NotificationTargetUser.GENERAL,
+                "A deprecation note", "<p>Deprecation happens in three minutes</p>");
+        notification.setId(UUID.randomUUID());
+        return notification;
+    }
+
+    protected Instructor getTypicalInstructor() {
+        Course course = getTypicalCourse();
+        InstructorPrivileges instructorPrivileges =
+                new InstructorPrivileges(Const.InstructorPermissionRoleNames.INSTRUCTOR_PERMISSION_ROLE_COOWNER);
+        InstructorPermissionRole role = InstructorPermissionRole
+                .getEnum(Const.InstructorPermissionRoleNames.INSTRUCTOR_PERMISSION_ROLE_COOWNER);
+
+        return new Instructor(course, "instructor-name", "valid@teammates.tmt",
+                false, Const.DEFAULT_DISPLAY_NAME_FOR_INSTRUCTOR, role, instructorPrivileges);
+    }
+
+    protected Course getTypicalCourse() {
+        return new Course("course-id", "course-name", Const.DEFAULT_TIME_ZONE, "teammates");
+    }
+
+    protected Student getTypicalStudent() {
+        Course course = getTypicalCourse();
+        return new Student(course, "student-name", "validstudent@teammates.tmt", "comments");
+    }
+
+    protected Section getTypicalSection() {
+        Course course = getTypicalCourse();
+        return new Section(course, "test-section");
+    }
+
+    protected Team getTypicalTeam() {
+        Section section = getTypicalSection();
+        return new Team(section, "test-team");
+    }
+
+    protected FeedbackSession getTypicalFeedbackSessionForCourse(Course course) {
+        Instant startTime = TimeHelperExtension.getInstantDaysOffsetFromNow(1);
+        Instant endTime = TimeHelperExtension.getInstantDaysOffsetFromNow(7);
+        return new FeedbackSession("test-feedbacksession",
+                course,
+                "test@teammates.tmt",
+                "test-instructions",
+                startTime,
+                endTime,
+                startTime,
+                endTime,
+                Duration.ofMinutes(5),
+                false,
+                false,
+                false);
+    }
+
+    protected FeedbackQuestion getTypicalFeedbackQuestionForSession(FeedbackSession session) {
+        return FeedbackQuestion.makeQuestion(session, 1, "test-description",
+                FeedbackParticipantType.SELF, FeedbackParticipantType.SELF, 1, new ArrayList<>(),
+                new ArrayList<>(), new ArrayList<>(),
+                new FeedbackTextQuestionDetails("test question text"));
+    }
+
+    protected FeedbackResponse getTypicalFeedbackResponseForQuestion(FeedbackQuestion question) {
+        return FeedbackResponse.makeResponse(question, "test-giver", getTypicalSection(), "test-recipient",
+                getTypicalSection(), getTypicalFeedbackResponseDetails());
+    }
+
+    protected FeedbackResponseDetails getTypicalFeedbackResponseDetails() {
+        return new FeedbackTextResponseDetails();
+    }
+
+    protected FeedbackResponseComment getTypicalResponseComment(Long id) {
+        FeedbackResponseComment comment = new FeedbackResponseComment(null, "",
+                FeedbackParticipantType.STUDENTS, null, null, "",
+                false, false,
+                null, null, null);
+        comment.setId(id);
+        return comment;
+    }
+
+    protected AccountRequest getTypicalAccountRequest() {
+        return new AccountRequest("valid@test.com", "Test Name", "TEAMMATES Test Institute 1, Test Country",
+                AccountRequestStatus.PENDING, "");
     }
 
     /**
@@ -139,124 +286,83 @@ public class BaseTestCase {
      */
 
     protected static void assertTrue(boolean condition) {
-        Assert.assertTrue(condition);
+        Assertions.assertTrue(condition);
     }
 
     protected static void assertTrue(String message, boolean condition) {
-        Assert.assertTrue(message, condition);
+        Assertions.assertTrue(condition, message);
     }
 
     protected static void assertFalse(boolean condition) {
-        Assert.assertFalse(condition);
+        Assertions.assertFalse(condition);
     }
 
     protected static void assertFalse(String message, boolean condition) {
-        Assert.assertFalse(message, condition);
+        Assertions.assertFalse(condition, message);
     }
 
     protected static void assertEquals(int expected, int actual) {
-        Assert.assertEquals(expected, actual);
+        Assertions.assertEquals(expected, actual);
     }
 
     protected static void assertEquals(String message, int expected, int actual) {
-        Assert.assertEquals(message, expected, actual);
+        Assertions.assertEquals(expected, actual, message);
     }
 
     protected static void assertEquals(long expected, long actual) {
-        Assert.assertEquals(expected, actual);
+        Assertions.assertEquals(expected, actual);
     }
 
     protected static void assertEquals(double expected, double actual, double delta) {
-        Assert.assertEquals(expected, actual, delta);
+        Assertions.assertEquals(expected, actual, delta);
     }
 
     protected static void assertEquals(Object expected, Object actual) {
-        Assert.assertEquals(expected, actual);
+        Assertions.assertEquals(expected, actual);
     }
 
     protected static void assertEquals(String message, Object expected, Object actual) {
-        Assert.assertEquals(message, expected, actual);
+        Assertions.assertEquals(expected, actual, message);
     }
 
     protected static void assertArrayEquals(byte[] expected, byte[] actual) {
-        Assert.assertArrayEquals(expected, actual);
+        Assertions.assertArrayEquals(expected, actual);
     }
 
     protected static void assertNotEquals(Object first, Object second) {
-        Assert.assertNotEquals(first, second);
+        Assertions.assertNotEquals(first, second);
+    }
+
+    protected static void assertSame(Object expected, Object actual) {
+        Assertions.assertSame(expected, actual);
     }
 
     protected static void assertNotSame(Object unexpected, Object actual) {
-        Assert.assertNotSame(unexpected, actual);
+        Assertions.assertNotSame(unexpected, actual);
     }
 
     protected static void assertNull(Object object) {
-        Assert.assertNull(object);
+        Assertions.assertNull(object);
     }
 
     protected static void assertNull(String message, Object object) {
-        Assert.assertNull(message, object);
+        Assertions.assertNull(object, message);
     }
 
     protected static void assertNotNull(Object object) {
-        Assert.assertNotNull(object);
+        Assertions.assertNotNull(object);
     }
 
     protected static void assertNotNull(String message, Object object) {
-        Assert.assertNotNull(message, object);
+        Assertions.assertNotNull(object, message);
     }
 
     protected static void fail(String message) {
-        Assert.fail(message);
+        Assertions.fail(message);
     }
 
-    // This method is adapted from JUnit 5's assertThrows.
-    // Once we upgrade to JUnit 5, their built-in method shall be used instead.
-    @SuppressWarnings({
-            "unchecked",
-            "PMD.AvoidCatchingThrowable", // As per reference method's specification
-    })
     protected static <T extends Throwable> T assertThrows(Class<T> expectedType, Executable executable) {
-        try {
-            executable.execute();
-        } catch (Throwable actualException) {
-            if (expectedType.isInstance(actualException)) {
-                return (T) actualException;
-            } else {
-                String message = String.format("Expected %s to be thrown, but %s was instead thrown.",
-                        getCanonicalName(expectedType), getCanonicalName(actualException.getClass()));
-                throw new AssertionError(message, actualException);
-            }
-        }
-
-        String message = String.format("Expected %s to be thrown, but nothing was thrown.", getCanonicalName(expectedType));
-        throw new AssertionError(message);
-    }
-
-    private static String getCanonicalName(Class<?> clazz) {
-        String canonicalName = clazz.getCanonicalName();
-        return canonicalName == null ? clazz.getName() : canonicalName;
-    }
-
-    /**
-     * {@code Executable} is a functional interface that can be used to
-     * implement any generic block of code that potentially throws a
-     * {@link Throwable}.
-     *
-     * <p>The {@code Executable} interface is similar to {@link Runnable},
-     * except that an {@code Executable} can throw any kind of exception.
-     */
-    // This interface is adapted from JUnit 5's Executable interface.
-    // Once we upgrade to JUnit 5, this interface shall no longer be necessary.
-    public interface Executable {
-
-        /**
-         * Executes a block of code, potentially throwing a {@link Throwable}.
-         */
-        // CHECKSTYLE.OFF:IllegalThrows
-        void execute() throws Throwable;
-        // CHECKSTYLE.ON:IllegalThrows
-
+        return Assertions.assertThrows(expectedType, executable);
     }
 
 }

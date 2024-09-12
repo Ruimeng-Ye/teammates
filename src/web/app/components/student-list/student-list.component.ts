@@ -1,5 +1,6 @@
 import { Component, EventEmitter, Input, Output, OnInit } from '@angular/core';
 import { NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
+import { CellWithActionsComponent } from './cell-with-actions.component';
 import { CourseService } from '../../../services/course.service';
 import { SimpleModalService } from '../../../services/simple-modal.service';
 import { StatusMessageService } from '../../../services/status-message.service';
@@ -14,7 +15,6 @@ import {
     SortableTableCellData,
     SortableTableHeaderColorScheme,
 } from '../sortable-table/sortable-table.component';
-import { CellWithActionsComponent } from './cell-with-actions.component';
 
 /**
  * Model of row of student data containing details about a student and their section.
@@ -253,12 +253,5 @@ export class StudentListComponent implements OnInit {
    */
   sortStudentListEventHandler(event: { sortBy: SortBy, sortOrder: SortOrder }): void {
     this.sortStudentListEvent.emit(event);
-  }
-
-  getAriaSort(by: SortBy): String {
-    if (by !== this.tableSortBy) {
-      return 'none';
-    }
-    return this.tableSortOrder === SortOrder.ASC ? 'ascending' : 'descending';
   }
 }

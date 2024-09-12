@@ -4,12 +4,14 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.UUID;
 
 import org.testng.ITestContext;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 
 import teammates.common.datatransfer.DataBundle;
+import teammates.common.datatransfer.SqlDataBundle;
 import teammates.common.datatransfer.attributes.AccountAttributes;
 import teammates.common.datatransfer.attributes.AccountRequestAttributes;
 import teammates.common.datatransfer.attributes.CourseAttributes;
@@ -52,6 +54,11 @@ public abstract class BaseE2ETestCase extends BaseTestCaseWithDatabaseAccess {
      * Data to be used in the test.
      */
     protected DataBundle testData;
+
+    /**
+     * Sql Data to be used in the test.
+     */
+    protected SqlDataBundle sqlTestData;
 
     private Browser browser;
 
@@ -323,7 +330,7 @@ public abstract class BaseE2ETestCase extends BaseTestCaseWithDatabaseAccess {
 
     @Override
     protected AccountRequestAttributes getAccountRequest(AccountRequestAttributes accountRequest) {
-        return BACKDOOR.getAccountRequest(accountRequest.getEmail(), accountRequest.getInstitute());
+        return BACKDOOR.getAccountRequest(UUID.fromString(accountRequest.getId()));
     }
 
     NotificationAttributes getNotification(String notificationId) {
@@ -354,9 +361,30 @@ public abstract class BaseE2ETestCase extends BaseTestCaseWithDatabaseAccess {
     }
 
     @Override
+    protected SqlDataBundle doRemoveAndRestoreSqlDataBundle(SqlDataBundle testData) {
+        try {
+            return BACKDOOR.removeAndRestoreSqlDataBundle(testData);
+        } catch (HttpRequestFailedException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    @Override
     protected boolean doPutDocuments(DataBundle testData) {
         try {
             BACKDOOR.putDocuments(testData);
+            return true;
+        } catch (HttpRequestFailedException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    @Override
+    protected boolean doPutDocumentsSql(SqlDataBundle testData) {
+        try {
+            BACKDOOR.putSqlDocuments(testData);
             return true;
         } catch (HttpRequestFailedException e) {
             e.printStackTrace();

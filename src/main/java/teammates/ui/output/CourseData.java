@@ -1,9 +1,10 @@
 package teammates.ui.output;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 
 import teammates.common.datatransfer.InstructorPermissionSet;
 import teammates.common.datatransfer.attributes.CourseAttributes;
+import teammates.storage.sqlentity.Course;
 
 /**
  * The API output format of a course.
@@ -14,6 +15,8 @@ public class CourseData extends ApiOutput {
     private final String courseName;
     private final String timeZone;
     private final String institute;
+    @Nullable
+    private final Boolean isMigrated;
     private long creationTimestamp;
     private long deletionTimestamp;
     @Nullable
@@ -28,6 +31,19 @@ public class CourseData extends ApiOutput {
         if (courseAttributes.getDeletedAt() != null) {
             this.deletionTimestamp = courseAttributes.getDeletedAt().toEpochMilli();
         }
+        this.isMigrated = false;
+    }
+
+    public CourseData(Course course) {
+        this.courseId = course.getId();
+        this.courseName = course.getName();
+        this.timeZone = course.getTimeZone();
+        this.institute = course.getInstitute();
+        this.creationTimestamp = course.getCreatedAt().toEpochMilli();
+        if (course.getDeletedAt() != null) {
+            this.deletionTimestamp = course.getDeletedAt().toEpochMilli();
+        }
+        this.isMigrated = true;
     }
 
     public String getCourseId() {
@@ -52,6 +68,10 @@ public class CourseData extends ApiOutput {
 
     public long getDeletionTimestamp() {
         return deletionTimestamp;
+    }
+
+    public Boolean getIsMigrated() {
+        return isMigrated;
     }
 
     public InstructorPermissionSet getPrivileges() {

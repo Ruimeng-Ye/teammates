@@ -49,6 +49,11 @@ public class TestDataValidityTest extends BaseTestCase {
         try (Stream<Path> paths = Files.walk(Paths.get(TestProperties.TEST_DATA_FOLDER))) {
             paths.filter(Files::isRegularFile).forEach(path -> {
                 String pathString = path.toString();
+
+                // we ignore sql tests for now, will need to create a TestDataValidaity for sql entities
+                if (pathString.contains("Sql")) {
+                    return;
+                }
                 String jsonString;
                 try {
                     jsonString = FileHelper.readFile(pathString);
@@ -176,7 +181,7 @@ public class TestDataValidityTest extends BaseTestCase {
     }
 
     private boolean isValidTestGoogleId(String googleId, String testPage) {
-        if (googleId == null || googleId.equals("")) {
+        if (googleId == null || "".equals(googleId)) {
             // Empty google ID is always acceptable
             return true;
         }

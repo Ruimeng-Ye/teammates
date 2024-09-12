@@ -1,9 +1,10 @@
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
-import { ResourceEndpoints } from '../types/api-const';
-import { AccountCreateRequest } from '../types/api-request';
 import { AccountService } from './account.service';
 import { HttpRequestService } from './http-request.service';
+import createSpyFromClass from '../test-helpers/create-spy-from-class';
+import { ResourceEndpoints } from '../types/api-const';
+import { AccountCreateRequest } from '../types/api-request';
 
 describe('AccountService', () => {
   let spyHttpRequestService: any;
@@ -11,12 +12,7 @@ describe('AccountService', () => {
   const id: string = 'TestID';
 
   beforeEach(() => {
-    spyHttpRequestService = {
-      get: jest.fn(),
-      post: jest.fn(),
-      put: jest.fn(),
-      delete: jest.fn(),
-    };
+    spyHttpRequestService = createSpyFromClass(HttpRequestService);
     TestBed.configureTestingModule({
       imports: [
         HttpClientTestingModule,
@@ -88,19 +84,17 @@ describe('AccountService', () => {
   });
 
   it('should execute DELETE on account request endpoint', () => {
-    service.deleteAccountRequest('testEmail', 'testInstitution');
+    service.deleteAccountRequest('testId');
     const paramMap: Record<string, string> = {
-      instructoremail: 'testEmail',
-      instructorinstitution: 'testInstitution',
+      id: 'testId',
     };
     expect(spyHttpRequestService.delete).toHaveBeenCalledWith(ResourceEndpoints.ACCOUNT_REQUEST, paramMap);
   });
 
   it('should execute PUT on account request reset endpoint', () => {
-    service.resetAccountRequest('testEmail', 'testInstitution');
+    service.resetAccountRequest('testId');
     const paramMap: Record<string, string> = {
-      instructoremail: 'testEmail',
-      instructorinstitution: 'testInstitution',
+      id: 'testId',
     };
     expect(spyHttpRequestService.put).toHaveBeenCalledWith(ResourceEndpoints.ACCOUNT_REQUEST_RESET, paramMap);
   });

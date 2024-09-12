@@ -1,9 +1,19 @@
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 import { RouterTestingModule } from '@angular/router/testing';
+import { HttpRequestService } from './http-request.service';
+import {
+  AccountRequestSearchResult,
+  InstructorAccountSearchResult,
+  SearchService,
+  StudentAccountSearchResult,
+} from './search.service';
+import { TimezoneService } from './timezone.service';
+import createSpyFromClass from '../test-helpers/create-spy-from-class';
 import { ResourceEndpoints } from '../types/api-const';
 import {
   AccountRequest,
+  AccountRequestStatus,
   Course,
   FeedbackSession,
   FeedbackSessionPublishStatus,
@@ -16,14 +26,6 @@ import {
   SessionVisibleSetting,
   Student,
 } from '../types/api-output';
-import { HttpRequestService } from './http-request.service';
-import {
-  AccountRequestSearchResult,
-  InstructorAccountSearchResult,
-  SearchService,
-  StudentAccountSearchResult,
-} from './search.service';
-import { TimezoneService } from './timezone.service';
 
 describe('SearchService', () => {
   let spyHttpRequestService: any;
@@ -183,20 +185,18 @@ describe('SearchService', () => {
   };
 
   const mockAccountRequest: AccountRequest = {
+    id: '132efa02-b208-4195-a262-a8eae25ceb95',
     registrationKey: 'regkey',
     createdAt: 1585487897502,
     name: 'Test Instructor',
     institute: 'Test Institute',
     email: 'test@example.com',
+    comments: 'This is a test account request',
+    status: AccountRequestStatus.APPROVED,
   };
 
   beforeEach(() => {
-    spyHttpRequestService = {
-      get: jest.fn(),
-      post: jest.fn(),
-      put: jest.fn(),
-      delete: jest.fn(),
-    };
+    spyHttpRequestService = createSpyFromClass(HttpRequestService);
     TestBed.configureTestingModule({
       imports: [HttpClientTestingModule, RouterTestingModule],
       providers: [
@@ -298,9 +298,14 @@ describe('SearchService', () => {
 
   it('should join account requests accurately when timezone can be guessed and instructor is registered', () => {
     jest.spyOn(timezoneService, 'guessTimezone').mockReturnValue('Asia/Singapore');
-    const accountRequest: AccountRequest = { ...mockAccountRequest, registeredAt: 1685487897502 };
+    const accountRequest: AccountRequest = {
+      ...mockAccountRequest,
+      registeredAt: 1685487897502,
+      status: AccountRequestStatus.REGISTERED,
+    };
     const result: AccountRequestSearchResult = service.joinAdminAccountRequest(accountRequest);
 
+    expect(result.id).toBe('132efa02-b208-4195-a262-a8eae25ceb95');
     expect(result.email).toBe('test@example.com');
     expect(result.institute).toBe('Test Institute');
     expect(result.name).toBe('Test Instructor');

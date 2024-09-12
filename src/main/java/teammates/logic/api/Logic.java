@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 
 import teammates.common.datatransfer.DataBundle;
 import teammates.common.datatransfer.FeedbackQuestionRecipient;
@@ -634,6 +634,17 @@ public class Logic {
     public List<StudentAttributes> getStudentsForGoogleId(String googleId) {
         assert googleId != null;
         return studentsLogic.getStudentsForGoogleId(googleId);
+    }
+
+    /**
+     * Preconditions: <br>
+     * * All parameters are non-null.
+     *
+     * @return Empty list if not match found
+     */
+    public List<StudentAttributes> getAllStudentsForEmail(String email) {
+        assert email != null;
+        return studentsLogic.getAllStudentsForEmail(email);
     }
 
     /**
@@ -1322,7 +1333,7 @@ public class Logic {
     }
 
     /**
-     * Deletes a feedback response cascade its associated comments.
+     * Deletes a feedback response and cascades its associated comments.
      *
      * <br/>Preconditions: <br/>
      * * All parameters are non-null.

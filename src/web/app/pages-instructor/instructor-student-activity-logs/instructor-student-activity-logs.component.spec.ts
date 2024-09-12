@@ -3,6 +3,8 @@ import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { RouterTestingModule } from '@angular/router/testing';
 import { of } from 'rxjs';
 import SpyInstance = jest.SpyInstance;
+import { InstructorStudentActivityLogsComponent } from './instructor-student-activity-logs.component';
+import { InstructorStudentActivityLogsModule } from './instructor-student-activity-logs.module';
 import { LogService } from '../../../services/log.service';
 import { StudentService } from '../../../services/student.service';
 import { TimezoneService } from '../../../services/timezone.service';
@@ -20,8 +22,6 @@ import {
 import { Milliseconds } from '../../../types/datetime-const';
 import { SortBy } from '../../../types/sort-properties';
 import { ColumnData } from '../../components/sortable-table/sortable-table.component';
-import { InstructorStudentActivityLogsComponent } from './instructor-student-activity-logs.component';
-import { InstructorStudentActivityLogsModule } from './instructor-student-activity-logs.module';
 
 describe('InstructorStudentActivityLogsComponent', () => {
   let component: InstructorStudentActivityLogsComponent;
@@ -145,9 +145,9 @@ describe('InstructorStudentActivityLogsComponent', () => {
       logsTimeFrom: { hour: 23, minute: 59 },
       logsDateTo: { year: 1998, month: 9, day: 11 },
       logsTimeTo: { hour: 15, minute: 0 },
-      studentEmail: 'doejohn@email.com',
+      selectedStudent: { studentEmail: 'doejohn@email.com', studentId: undefined },
       logType: 'session access',
-      feedbackSessionName: '',
+      selectedSession: { feedbackSessionName: undefined, sessionId: undefined },
       showActions: false,
       showInactions: false,
     };
@@ -232,9 +232,9 @@ describe('InstructorStudentActivityLogsComponent', () => {
       logsTimeFrom: { hour: 23, minute: 59 },
       logsDateTo: { year: 2020, month: 12, day: 31 },
       logsTimeTo: { hour: 23, minute: 59 },
-      studentEmail: testStudent.email,
+      selectedStudent: { studentEmail: testStudent.email, studentId: '' },
       logType: 'submission',
-      feedbackSessionName: '',
+      selectedSession: { feedbackSessionName: '', sessionId: '' },
       showActions: true,
       showInactions: false,
     };
@@ -261,6 +261,8 @@ describe('InstructorStudentActivityLogsComponent', () => {
       studentEmail: testStudent.email,
       sessionName: '',
       logType: 'submission',
+      studentId: '',
+      sessionId: '',
     });
 
     expect(component.searchResults.length).toEqual(2);
